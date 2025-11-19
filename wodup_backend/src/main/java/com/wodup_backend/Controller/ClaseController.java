@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors; // Necesario para mapear la respuesta
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -88,6 +88,24 @@ public class ClaseController {
     public ResponseEntity<Void> eliminarClase(@PathVariable Long id) {
         claseService.eliminarClase(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/hoy")
+    public ResponseEntity<List<ClaseDTO>> obtenerClasesDeHoy() {
+        List<Clase> clasesHoy = claseService.getClasesDeHoy();
+
+        List<ClaseDTO> clasesDTO = clasesHoy.stream()
+                .map(clase -> new ClaseDTO(
+                        clase.getId(),
+                        clase.getNombre(),
+                        clase.getFecha(),
+                        clase.getHoraInicio(),
+                        clase.getHoraFin(),
+                        clase.getCapacidad(),
+                        clase.getCoach() != null ? clase.getCoach().getId() : null))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(clasesDTO);
     }
 
 }

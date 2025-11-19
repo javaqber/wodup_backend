@@ -86,8 +86,8 @@ public class ClaseService {
         claseRepository.deleteById(id);
     }
 
-    public Clase getClaseDeHoy() {
+    public List<Clase> getClasesDeHoy() {
         LocalDate hoy = LocalDate.now();
-        return claseRepository.findByFecha(hoy).orElse(null);
+        return claseRepository.findByFechaOrderByHoraInicioAsc(hoy);
     }
 }

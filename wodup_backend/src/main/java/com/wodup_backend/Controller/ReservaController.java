@@ -50,17 +50,20 @@ public class ReservaController {
     }
 
     // 2. CREAR RESERVA (Requiere ID de clase en el path)
-    @PostMapping("/{claseId}")
+    @PostMapping
     @PreAuthorize("hasRole('ATHLETE')")
-    public ResponseEntity<Reserva> reservarClase(@PathVariable Long claseId,
+    public ResponseEntity<Reserva> reservarClase(
+            @RequestBody com.wodup_backend.dto.ReservaDTO reservaDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        // Obtenemos el email del usuario logueado, que es lo que espera el servicio.
         String usuarioEmail = userDetails.getUsername();
 
         try {
-            // Llama al servicio, que ahora acepta String email
-            Reserva reserva = reservaService.crearReserva(usuarioEmail, claseId);
+            Reserva reserva = reservaService.crearReserva(
+                    usuarioEmail,
+                    reservaDTO.getClaseId(),
+                    reservaDTO.getHoraInicio(),
+                    reservaDTO.getHoraFin());
             return new ResponseEntity<>(reserva, HttpStatus.CREATED);
         } catch (ResponseStatusException e) {
             throw e;
